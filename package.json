@@ -1,0 +1,21 @@
+{
+  "dependencies": {
+    "express": "^4.18.2",
+    "networked-aframe": "^0.12.0",
+    "uuid": "^9.0.1",
+    "ws": "^8.16.0"
+  },
+  "scripts": {
+    "start": "node ./server/easyrtc-server.js"
+  },
+  "name": "server",
+  "version": "1.0.0",
+  "main": "easyrtc-server.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "directories": {
+    "example": "examples"
+  },
+  "description": ""
+}

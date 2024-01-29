@@ -1,0 +1,7 @@
+npm ERR! Missing script: "stop"
+npm ERR! 
+npm ERR! To see a list of scripts, run:
+npm ERR!   npm run
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     /Users/andr3w/.npm/_logs/2024-01-29T22_40_17_001Z-debug.log
