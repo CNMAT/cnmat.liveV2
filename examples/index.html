@@ -124,7 +124,7 @@
         
         <template id="avatar-template">
           <a-entity class="avatar">
-            <a-sphere class="head" color="#5985ff" scale="0.45 0.5 0.4" ></a-sphere>
+            <a-box class="head" color="#5985ff" scale="0.45 0.5 0.4" ></a-box>
             <a-entity class="face" position="0 0.05 0" >
               <a-sphere class="eye" color="#efefef" position="0.16 0.1 -0.35" scale="0.12 0.12 0.12" >
                 <a-sphere class="pupil" color="#000" position="0 0 -1" scale="0.2 0.2 0.2" ></a-sphere>
@@ -138,7 +138,7 @@
       </a-assets>
       
       <a-entity id="player" networked="template:#avatar-template;attachTemplateToLocal:false;" sound="src: #snap; autoplay: false" camera position="0 1.3 0" wasd-controls look-controls></a-entity>
-      <a-plane position="0 -1 -4" rotation="-90 0 0" width="40" height="40" color="#f1f1f1" ></a-plane>
+      <a-plane position="0 -1 -10" rotation="-90 0 0" width="300" height="300" color="#f1f1f1" ></a-plane>
       <a-box position="0 2 -12" width="2" height="2" color="#ff0000" ></a-plane>
       <a-box position="0 3 32" width="2" height="1" depth="2" color="#0000ff" ></a-plane>
       <a-box position="42 2 32" width="3" height="1" depth="2" color="#00ffff" ></a-plane>
@@ -148,112 +148,87 @@
 
     </a-scene>
     <script>
-
-        var spawnPoint = null;
-        var firstUpdateProcessed = false;
-        var geoWatchId = null;
-
-    // Function to update the avatar's position
-    function updateAvatarPosition(position) {
-        if (!firstUpdateProcessed && spawnPoint && spawnPoint.latitude === 0 && spawnPoint.longitude === 0) {
-            firstUpdateProcessed = true;
-            return;
-        }
-
-        var latitude = position.coords.latitude;
-        var longitude = position.coords.longitude;
-
-        if (spawnPoint === null) {
-            spawnPoint = {latitude: latitude, longitude: longitude};
-        }
-
-        var latitudeOffset = latitude - spawnPoint.latitude;
-        var longitudeOffset = longitude - spawnPoint.longitude;
-
-        var avatar = document.getElementById('player');
-        avatar.setAttribute('position', `${latitudeOffset} 0 ${longitudeOffset}`);
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const button = document.getElementById('startButton');
-        button.addEventListener('click', function() {
-          // Resume the AudioContext to comply with browser autoplay policies
-          if (AFRAME.scenes[0].audioListener.context.state === 'suspended') {
-            AFRAME.scenes[0].audioListener.context.resume().then(() => {
-              console.log('AudioContext resumed!');
-              // // Change the button color to green to indicate success
-              // button.style.backgroundColor = 'green';
-              // button.innerText = 'Audio Started'; // Optionally change button text
-              // button.disabled = true; // Optionally disable the button after activation
-    
-              // Play the snap sound
-              playSnapSound();
-            }).catch(err => {
-              console.error('Error resuming AudioContext:', err);
-            });
-          } else {
-            // If AudioContext is already running, just play the sound
-            playSnapSound();
+      var spawnPoint = null;
+      var firstUpdateProcessed = false;
+      var geoWatchId = null;
+      var lastUpdate = Date.now();
+      var updateThreshold = 100;
+      
+      document.addEventListener('DOMContentLoaded', () => {
+          const startButton = document.getElementById('startButton');
+      
+          function initializeGeolocation() {
+              if (geoWatchId !== null) {
+                  navigator.geolocation.clearWatch(geoWatchId);
+              }
+      
+              geoWatchId = navigator.geolocation.watchPosition(updateAvatarPosition, showError, {
+                  enableHighAccuracy: true,
+                  maximumAge: 0,
+                  timeout: 5000
+              });
           }
-        });
-    
-        function playSnapSound() {
-          var soundEl = document.getElementById('snapSound');
-          if (soundEl && soundEl.components && soundEl.components.sound) {
-            // Stop the currently playing sound
-            soundEl.components.sound.stopSound();
-            // Immediately play the sound from the beginning
-            soundEl.components.sound.playSound();
+      
+          function updateAvatarPosition(position) {
+              if (Date.now() - lastUpdate < updateThreshold) {
+                  return; // Skip this update because it's too soon
+              }
+              lastUpdate = Date.now();
+
+              if (!firstUpdateProcessed && spawnPoint && spawnPoint.latitude === 0 && spawnPoint.longitude === 0) {
+                  firstUpdateProcessed = true;
+                  return;
+              }
+
+              var latitude = position.coords.latitude;
+              var longitude = position.coords.longitude;
+
+              if (spawnPoint === null) {
+                  spawnPoint = {latitude: latitude, longitude: longitude};
+              }
+
+              // Calculate offsets in meters
+              var latitudeOffset = (latitude - spawnPoint.latitude) * 111000; // 1 degree latitude = 111 km
+              var longitudeOffset = (longitude - spawnPoint.longitude) * (Math.cos(latitude * Math.PI / 180) * 111000); // Adjust longitude by the cosine of latitude
+
+              var avatar = document.getElementById('player');
+              avatar.setAttribute('position', `${longitudeOffset} 0 ${latitudeOffset}`);
+              console.log('Updated position:', longitudeOffset, latitudeOffset);
           }
-        }
+
+      
+          function showError(error) {
+              console.error('Error watching location:', error);
+          }
+      
+          startButton.addEventListener('click', () => {
+              var spawnAtOrigin = document.getElementById('spawnAtOriginToggle').checked;
+              spawnPoint = spawnAtOrigin ? {latitude: 0, longitude: 0} : null;
+              firstUpdateProcessed = false;
+      
+              document.getElementById('splashScreen').style.display = 'none';
+              var audioContext = AFRAME.scenes[0].audioListener.context;
+              if (audioContext.state === 'suspended') {
+                  audioContext.resume().then(() => {
+                      console.log('AudioContext resumed!');
+                  }).catch(err => {
+                      console.error('Error resuming AudioContext:', err);
+                  });
+              }
+      
+              initializeGeolocation();
+          });
+      
+          document.addEventListener('keydown', function(event) {
+              if (event.key === 'Escape') {
+                  document.getElementById('splashScreen').style.display = 'flex';
+                  if (geoWatchId !== null) {
+                      navigator.geolocation.clearWatch(geoWatchId);
+                      geoWatchId = null;
+                  }
+              }
+          });
       });
-
-    document.getElementById('startButton').addEventListener('click', function() {
-        var spawnAtOrigin = document.getElementById('spawnAtOriginToggle').checked;
-        if (spawnAtOrigin) {
-            spawnPoint = {latitude: 0, longitude: 0};
-        } else {
-            spawnPoint = null;
-            firstUpdateProcessed = false;
-        }
-
-        // Hide the splash screen
-        document.getElementById('splashScreen').style.display = 'none';
-
-        // Start the audio
-        var audioContext = AFRAME.scenes[0].audioListener.context;
-        if (audioContext.state === 'suspended') {
-            audioContext.resume().then(() => {
-                console.log('AudioContext resumed!');
-            }).catch(err => {
-                console.error('Error resuming AudioContext:', err);
-            });
-        }
-
-        if ('geolocation' in navigator) {
-            geoWatchId = navigator.geolocation.watchPosition(updateAvatarPosition, function(error) {
-                console.error('Error watching location:', error);
-            }, {
-                enableHighAccuracy: true,
-                maximumAge: 0,
-                timeout: 5000
-            });
-        } else {
-            console.log('Geolocation is not supported by this browser.');
-        }
-      });
-
-    document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                document.getElementById('splashScreen').style.display = 'flex';
-                if (geoWatchId !== null) {
-                    navigator.geolocation.clearWatch(geoWatchId);
-                    geoWatchId = null;
-                }
-            }
-        });
-
-  </script>
-
+      </script>
   </body>
 </html>
