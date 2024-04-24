@@ -93,6 +93,9 @@
         } else if (data.type.startsWith('sign') && data['0'] === 1) {
           const soundId = data.type; // Use the type directly as the sound ID
           playSound(soundId);
+        } else if (data.type.startsWith('ed') && data['0'] === 1) {
+          const soundId = data.type; // Use the type directly as the sound ID
+          playSound(soundId);
         }
 
         if (data.type === 'heartbeat') {
@@ -135,21 +138,21 @@
         <audio id="stick82" src="sound/82_stick.mp3" preload="auto"></audio>
         <audio id="stick83" src="sound/83_stick.mp3" preload="auto"></audio>
         <audio id="stick84" src="sound/84_stick.mp3" preload="auto"></audio>
-        <!-- <audio id="00_gtr_a3" src="sound/00_gtr_a3.mp3" preload="auto"></audio>
-        <audio id="01_gtr_as2" src="sound/01_gtr_as2.mp3" preload="auto"></audio>
-        <audio id="02_gtr_b4" src="sound/02_gtr_b4.mp3" preload="auto"></audio>
-        <audio id="03_gtr_b5" src="sound/03_gtr_b5.mp3" preload="auto"></audio>
-        <audio id="04_gtr_c4" src="sound/04_gtr_c4.mp3" preload="auto"></audio>
-        <audio id="05_gtr_ds3" src="sound/05_gtr_ds3.mp3" preload="auto"></audio>
-        <audio id="06_gtr_d4" src="sound/06_gtr_d4.mp3" preload="auto"></audio>
-        <audio id="07_gtr_d5" src="sound/07_gtr_d5.mp3" preload="auto"></audio>
-        <audio id="08_gtr_e3" src="sound/08_gtr_e3.mp3" preload="auto"></audio>
-        <audio id="09_gtr_e5" src="sound/09_gtr_e5.mp3" preload="auto"></audio>
-        <audio id="10_gtr_fs5" src="sound/10_gtr_fs5.mp3" preload="auto"></audio>
-        <audio id="11_gtr_f2" src="sound/11_gtr_f2.mp3" preload="auto"></audio>
-        <audio id="12_gtr_f4" src="sound/12_gtr_f4.mp3" preload="auto"></audio>
-        <audio id="13_gtr_gs4" src="sound/13_gtr_gs4.mp3" preload="auto"></audio>
-        <audio id="14_gtr_g4" src="sound/14_gtr_g4.mp3" preload="auto"></audio> -->
+        <audio id="ed_00_gtr_a3" src="sound/00_gtr_a3.mp3" preload="auto"></audio>
+        <audio id="ed_01_gtr_as2" src="sound/01_gtr_as2.mp3" preload="auto"></audio>
+        <audio id="ed_02_gtr_b4" src="sound/02_gtr_b4.mp3" preload="auto"></audio>
+        <audio id="ed_03_gtr_b5" src="sound/03_gtr_b5.mp3" preload="auto"></audio>
+        <audio id="ed_04_gtr_c4" src="sound/04_gtr_c4.mp3" preload="auto"></audio>
+        <audio id="ed_05_gtr_ds3" src="sound/05_gtr_ds3.mp3" preload="auto"></audio>
+        <audio id="ed_06_gtr_d4" src="sound/06_gtr_d4.mp3" preload="auto"></audio>
+        <audio id="ed_07_gtr_d5" src="sound/07_gtr_d5.mp3" preload="auto"></audio>
+        <audio id="ed_08_gtr_e3" src="sound/08_gtr_e3.mp3" preload="auto"></audio>
+        <audio id="ed_09_gtr_e5" src="sound/09_gtr_e5.mp3" preload="auto"></audio>
+        <audio id="ed_10_gtr_fs5" src="sound/10_gtr_fs5.mp3" preload="auto"></audio>
+        <audio id="ed_11_gtr_f2" src="sound/11_gtr_f2.mp3" preload="auto"></audio>
+        <audio id="ed_12_gtr_f4" src="sound/12_gtr_f4.mp3" preload="auto"></audio>
+        <audio id="ed_13_gtr_gs4" src="sound/13_gtr_gs4.mp3" preload="auto"></audio>
+        <audio id="ed_14_gtr_g4" src="sound/14_gtr_g4.mp3" preload="auto"></audio>
         
         <template id="avatar-template">
           <a-entity class="avatar">
