@@ -90,6 +90,9 @@
         } else if (data.type.startsWith('stick') && data['0'] === 1) {
           const soundId = data.type; // Use the type directly as the sound ID
           playSound(soundId);
+        } else if (data.type.startsWith('sign') && data['0'] === 1) {
+          const soundId = data.type; // Use the type directly as the sound ID
+          playSound(soundId);
         }
 
         if (data.type === 'heartbeat') {
