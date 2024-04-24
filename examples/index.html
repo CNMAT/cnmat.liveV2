@@ -156,56 +156,53 @@
       
       document.addEventListener('DOMContentLoaded', () => {
           const startButton = document.getElementById('startButton');
-      
+  
+          function generateNoise() {
+              // Generates a small random noise between -5 and 5 meters
+              return (Math.random() - 0.5) * 10 / 111000; // Convert meters to degrees
+          }
+  
           function initializeGeolocation() {
               if (geoWatchId !== null) {
                   navigator.geolocation.clearWatch(geoWatchId);
               }
-      
+  
               geoWatchId = navigator.geolocation.watchPosition(updateAvatarPosition, showError, {
                   enableHighAccuracy: true,
                   maximumAge: 0,
                   timeout: 5000
               });
           }
-      
+  
           function updateAvatarPosition(position) {
-              // if (Date.now() - lastUpdate < updateThreshold) {
-              //     return; // Skip this update because it's too soon
-              // }
-              // lastUpdate = Date.now();
-
-              // if (!firstUpdateProcessed && spawnPoint && spawnPoint.latitude === 0 && spawnPoint.longitude === 0) {
-              //     firstUpdateProcessed = true;
-              //     return;
-              // }
-
               var latitude = position.coords.latitude;
               var longitude = position.coords.longitude;
-
+  
               if (spawnPoint === null) {
-                  spawnPoint = {latitude: latitude, longitude: longitude};
+                  // Applying noise to the initial position
+                  spawnPoint = {
+                      latitude: latitude + generateNoise(),
+                      longitude: longitude + generateNoise()
+                  };
               }
-
-              // Calculate offsets in meters
+  
               var latitudeOffset = (latitude - spawnPoint.latitude) * 111000; // 1 degree latitude = 111 km
-              var longitudeOffset = (longitude - spawnPoint.longitude) * (Math.cos(latitude * Math.PI / 180) * 111000); // Adjust longitude by the cosine of latitude
-
+              var longitudeOffset = (longitude - spawnPoint.longitude) * (Math.cos(latitude * Math.PI / 180) * 111000);
+  
               var avatar = document.getElementById('player');
               avatar.setAttribute('position', `${longitudeOffset} 0 ${latitudeOffset}`);
               console.log('Updated position:', longitudeOffset, latitudeOffset);
           }
-
-      
+  
           function showError(error) {
               console.error('Error watching location:', error);
           }
-      
+  
           startButton.addEventListener('click', () => {
               var spawnAtOrigin = document.getElementById('spawnAtOriginToggle').checked;
-              spawnPoint = spawnAtOrigin ? {latitude: 0, longitude: 0} : null;
+              spawnPoint = spawnAtOrigin ? {latitude: 0 + generateNoise(), longitude: 0 + generateNoise()} : null;
               firstUpdateProcessed = false;
-      
+  
               document.getElementById('splashScreen').style.display = 'none';
               var audioContext = AFRAME.scenes[0].audioListener.context;
               if (audioContext.state === 'suspended') {
@@ -215,10 +212,10 @@
                       console.error('Error resuming AudioContext:', err);
                   });
               }
-      
+  
               initializeGeolocation();
           });
-      
+  
           document.addEventListener('keydown', function(event) {
               if (event.key === 'Escape') {
                   document.getElementById('splashScreen').style.display = 'flex';
@@ -229,7 +226,7 @@
               }
           });
       });
-      </script>
+  </script>
   </body>
 </html>
 
