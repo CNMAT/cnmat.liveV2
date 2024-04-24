@@ -170,15 +170,15 @@
           }
       
           function updateAvatarPosition(position) {
-              if (Date.now() - lastUpdate < updateThreshold) {
-                  return; // Skip this update because it's too soon
-              }
-              lastUpdate = Date.now();
+              // if (Date.now() - lastUpdate < updateThreshold) {
+              //     return; // Skip this update because it's too soon
+              // }
+              // lastUpdate = Date.now();
 
-              if (!firstUpdateProcessed && spawnPoint && spawnPoint.latitude === 0 && spawnPoint.longitude === 0) {
-                  firstUpdateProcessed = true;
-                  return;
-              }
+              // if (!firstUpdateProcessed && spawnPoint && spawnPoint.latitude === 0 && spawnPoint.longitude === 0) {
+              //     firstUpdateProcessed = true;
+              //     return;
+              // }
 
               var latitude = position.coords.latitude;
               var longitude = position.coords.longitude;
@@ -232,3 +232,6 @@
       </script>
   </body>
 </html>
+
+///////////// CNMAT Location -10712328.176228292 4204317.812115532  -- 37.876690,-122.264417
+///////////// -10712322.981879065 4204321.712892281
