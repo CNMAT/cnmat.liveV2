@@ -40,6 +40,30 @@
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
+					"id" : "obj-104",
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 486.5, 558.0, 171.0, 20.0 ],
+					"text" : "Users can scan QR ode to join"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"autofit" : 1,
+					"id" : "obj-98",
+					"maxclass" : "fpic",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "jit_matrix" ],
+					"patching_rect" : [ 479.5, 580.0, 222.0, 219.0 ],
+					"pic" : "Macintosh HD:/Users/jlw_cnmat/Documents/GitHub/wagne342/cnmat.liveV2/demo_maxpatch/cnmatliveqr.png"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"id" : "obj-88",
 					"maxclass" : "number",
 					"numinlets" : 1,
@@ -53,12 +77,13 @@
 , 			{
 				"box" : 				{
 					"id" : "obj-80",
+					"linecount" : 2,
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 1107.0, 840.0, 346.0, 22.0 ],
-					"text" : "sendToOne 86de3f81-cead-43a6-a491-12e5d4dccbe9 sine67 1"
+					"patching_rect" : [ 1107.0, 840.0, 346.0, 35.0 ],
+					"text" : "sendToOne 518fd8b6-909c-489e-b7a0-18701775100d sine65 1"
 				}
 
 			}
@@ -214,7 +239,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 563.0, 361.0, 108.0, 22.0 ],
-					"text" : "message stick82 1"
+					"text" : "message stick81 1"
 				}
 
 			}
@@ -924,13 +949,13 @@
 				"box" : 				{
 					"fontface" : 0,
 					"id" : "obj-16",
-					"linecount" : 7,
+					"linecount" : 5,
 					"maxclass" : "o.display",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 55.5, 714.0, 396.0, 110.0 ],
-					"text" : "/type : \"joinedChannels\",\n/channels : {\n  /channel : \"aframe\",\n  /members : [\"c7728c4e-ae33-4317-8cb3-fa3ea8ed1bd7\", \"a8bfd19a-cf53-4a6b-9d5d-c58a7af8087e\", \"86de3f81-cead-43a6-a491-12e5d4dccbe9\"]\n}"
+					"patching_rect" : [ 55.5, 714.0, 396.0, 85.0 ],
+					"text" : "/type : \"joinedChannels\",\n/channels : {\n  /channel : \"aframe\",\n  /members : \"9310d6a9-5284-4db1-8575-19cb0375743a\"\n}"
 				}
 
 			}
@@ -1409,6 +1434,13 @@
 			}
  ],
 		"dependency_cache" : [ 			{
+				"name" : "cnmatliveqr.png",
+				"bootpath" : "~/Documents/GitHub/wagne342/cnmat.liveV2/demo_maxpatch",
+				"patcherrelativepath" : ".",
+				"type" : "PNG",
+				"implicit" : 1
+			}
+, 			{
 				"name" : "fiddle~.mxo",
 				"type" : "iLaX"
 			}
