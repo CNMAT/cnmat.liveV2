@@ -188,6 +188,24 @@
     }
   });
 </script>
+
+<script>
+  AFRAME.registerComponent('modify-materials', {
+    init: function () {
+      // Wait for model to load.
+      this.el.addEventListener('model-loaded', () => {
+        // Grab the mesh / scene.
+        const obj = this.el.getObject3D('mesh');
+        // Go over the submeshes and modify materials we want.
+        obj.traverse(node => {
+          if (node.name.indexOf('ship') !== -1) {
+            node.material.color.set('red');
+          }
+        });
+      });
+    }
+  });
+</script>
     <a-scene networked-scene="app: myApp; room: room1; debug: true;">
 
     <a-asset-item id="shineyModel" src="shiney.glb"></a-asset-item>
@@ -256,7 +274,7 @@
       <a-box position="0 2 -12" width="2" height="2" color="#ff0000" ></a-plane>
       <a-box position="0 3 32" width="2" height="1" depth="2" color="#0000ff" ></a-plane>
       <a-box position="42 2 32" width="3" height="1" depth="2" color="#00ffff" ></a-plane>
-      <a-entity gltf-model="#shineyModel" position="-50 0 -100" scale="10 10 10" rotation="0 90 0" material="transparent: true; opacity: 0.5;"></a-entity>
+      <a-entity gltf-model="#shineyModel" position="-50 0 -100" scale="10 10 10" rotation="0 90 0" modify-materials></a-entity>
      
       <a-entity id="soundEntity" position="1 1 -4" sound="autoplay: false" box1position></a-entity>
 
