@@ -1,40 +1,62 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.5.0/socket.io.slim.js"></script>
     <script src="/easyrtc/easyrtc.js"></script>
     <script src="https://unpkg.com/networked-aframe@^0.12.0/dist/networked-aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-extras/dist/aframe-extras.min.js"></script>
     <style>
-        #splashScreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.9);
+        body {
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
-            z-index: 10000;
+            text-align: center;
+            min-height: 100vh; /* Full height of the viewport */
+            margin: 0; /* Remove default margin */
         }
-        #splashScreen button {
-            margin-top: 20px;
-        }
-        #spawnAtOriginToggle {
-            margin-top: 20px;
-        }
+        #splashScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 10000;
+    text-align: center; /* Ensures text elements are centered if not otherwise specified */
+}
+
+#splashScreen label {
+    display: flex;
+    flex-direction: row; /* Layout the checkbox and paragraph in a row */
+    align-items: center;
+    justify-content: center; /* Center the label content horizontally in the splashScreen */
+    width: 100%; /* Ensures the label takes full width to utilize justify-content properly */
+}
+
+#splashScreen label p {
+    margin-left: 10px; /* Space between checkbox and paragraph */
+    width: 50%; /* Adjust width if necessary */
+    text-align: left; /* Text inside the paragraph aligned left */
+}
     </style>
 </head>
 <body>
     <div id="splashScreen">
         <h1>CNMAT.live</h1>
-        <p>Select this box to allow CNMAT.live to use your information from cellular, Wi-Fi, Global Positioning System (GPS), networks, and Bluetooth to determine your current location</p>
+        <p>Click the button below to start audio and allow positional data to enter the world.</p>
         <button id="startButton">Start</button>
+        <br>
+        <br>
         <label>
           <input type="checkbox" id="spawnAtOriginToggle">
-          Spawn at physical location
+          <p>Select this box to allow CNMAT.live to use your information from cellular, Wi-Fi, Global Positioning System (GPS), networks, and Bluetooth to determine your current location.</p>
         </label>
     </div>
 
@@ -169,7 +191,7 @@
         </template>
       </a-assets>
       
-      <a-entity id="player" networked="template:#avatar-template;attachTemplateToLocal:false;" sound="src: #snap; autoplay: false" camera position="0 1.3 0" wasd-controls look-controls></a-entity>
+      <a-entity id="player" networked="template:#avatar-template;attachTemplateToLocal:false;" sound="src: #snap; autoplay: false" camera position="0 1.3 0" camera look-controls universal-controls></a-entity>
       <a-plane position="0 -1 -10" rotation="-90 0 0" width="300" height="300" color="#f1f1f1" ></a-plane>
       <a-box position="0 2 -12" width="2" height="2" color="#ff0000" ></a-plane>
       <a-box position="0 3 32" width="2" height="1" depth="2" color="#0000ff" ></a-plane>
@@ -258,9 +280,8 @@
               }
           });
       });
+      ///////////// CNMAT Location -10712328.176228292 4204317.812115532  -- 37.876690,-122.264417
+      ///////////// -10712322.981879065 4204321.712892281
   </script>
   </body>
 </html>
-
-///////////// CNMAT Location -10712328.176228292 4204317.812115532  -- 37.876690,-122.264417
-///////////// -10712322.981879065 4204321.712892281
