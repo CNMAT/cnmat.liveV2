@@ -190,6 +190,8 @@
 </script>
     <a-scene networked-scene="app: myApp; room: room1; debug: true;">
 
+    <a-asset-item id="shineyModel" src="shiney.glb"></a-asset-item>
+
     <a-assets timeout="10000">
         <audio id="snap" src="sound/snap.mp3" preload="auto"></audio>
         <audio id="sine60" src="sound/60_longSine.mp3" preload="auto"></audio>
@@ -252,6 +254,7 @@
       <a-box position="0 2 -12" width="2" height="2" color="#ff0000" ></a-plane>
       <a-box position="0 3 32" width="2" height="1" depth="2" color="#0000ff" ></a-plane>
       <a-box position="42 2 32" width="3" height="1" depth="2" color="#00ffff" ></a-plane>
+      <a-entity gltf-model="#shineyModel" position="0 0 0" scale="1 1 1" rotation="0 0 0"></a-entity>
      
       <a-entity id="soundEntity" position="1 1 -4" sound="autoplay: false" box1position></a-entity>
 
