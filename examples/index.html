@@ -55,8 +55,20 @@
         <br>
         <br>
         <label>
-          <input type="checkbox" id="spawnAtOriginToggle">
-          <p>Select this box to allow CNMAT.live to use your information from cellular, Wi-Fi, Global Positioning System (GPS), networks, and Bluetooth to determine your current location.</p>
+          <input type="radio" name="locationOption" id="spawnAtOriginToggle">
+          <p>Join world at your current physical location.</p>
+        </label>
+        <label>
+          <input type="radio" name="locationOption" id="specificLocationToggleCNMAT" data-latitude="37.876636" data-longitude="-122.264534">
+          <p>Join world at CNMAT</p>
+        </label>
+        <label>
+          <input type="radio" name="locationOption" id="specificLocationToggleCampanile" data-latitude="37.872061" data-longitude="-122.257838">
+          <p>Join world at Campanile</p>
+        </label>
+        <label>
+          <input type="radio" name="locationOption" id="specificLocationToggleCampanile" data-latitude="0" data-longitude="0">
+          <p>Join world at Start</p>
         </label>
     </div>
 
@@ -209,6 +221,7 @@
     <a-scene networked-scene="app: myApp; room: room1; debug: true;">
 
     <a-asset-item id="shineyModel" src="shiney.glb"></a-asset-item>
+    <a-asset-item id="campanile-obj" src="campanile.obj"></a-asset-item>
 
     <a-assets timeout="10000">
         <audio id="snap" src="sound/snap.mp3" preload="auto"></audio>
@@ -271,11 +284,14 @@
       <a-light type="directional" color="#fff" intensity="0.6" position="-3 3 5"></a-light>
       <a-entity id="player" networked="template:#avatar-template;attachTemplateToLocal:false;" sound="src: #snap; autoplay: false" camera position="0 1.3 0" camera wasd-controls look-controls universal-controls></a-entity>
       <a-plane position="0 -1 -10" rotation="-90 0 0" width="300" height="300" color="#f1f1f1" ></a-plane>
+      <a-plane position="26758 -1 -63959" rotation="-90 0 0" width="300" height="300" color="#f1f1f1" ></a-plane>
+      <a-plane position="26161 -1 -63445" rotation="-90 0 0" width="300" height="300" color="#f1f1f1" ></a-plane>
       <a-box position="0 2 -12" width="2" height="2" color="#ff0000" ></a-plane>
       <a-box position="0 3 32" width="2" height="1" depth="2" color="#0000ff" ></a-plane>
       <a-box position="42 2 32" width="3" height="1" depth="2" color="#00ffff" ></a-plane>
       <a-entity gltf-model="#shineyModel" position="-50 0 -100" scale="10 10 10" rotation="0 90 0" modify-materials></a-entity>
-     
+      <a-obj-model src="#campanile-obj" position="26061 -10 -63535" rotation="0 0 0" scale="1 1 1"></a-obj-model>
+      
       <a-entity id="soundEntity" position="1 1 -4" sound="autoplay: false" box1position></a-entity>
 
 
@@ -308,6 +324,7 @@
           }
   
           function updateAvatarPosition(position) {
+            console.log(position);
               var latitude = position.coords.latitude;
               var longitude = position.coords.longitude;
   
@@ -325,6 +342,7 @@
               var avatar = document.getElementById('player');
               avatar.setAttribute('position', `${longitudeOffset} 0 ${latitudeOffset}`);
               console.log('Updated position:', longitudeOffset, latitudeOffset);
+
           }
   
           function showError(error) {
@@ -332,21 +350,36 @@
           }
   
           startButton.addEventListener('click', () => {
-              var spawnAtOrigin = document.getElementById('spawnAtOriginToggle').checked;
-              spawnPoint = spawnAtOrigin ? {latitude: 0 + generateNoise(), longitude: 0 + generateNoise()} : null;
-              firstUpdateProcessed = false;
-  
-              document.getElementById('splashScreen').style.display = 'none';
-              var audioContext = AFRAME.scenes[0].audioListener.context;
-              if (audioContext.state === 'suspended') {
-                  audioContext.resume().then(() => {
-                      console.log('AudioContext resumed!');
-                  }).catch(err => {
-                      console.error('Error resuming AudioContext:', err);
-                  });
-              }
-  
-              initializeGeolocation();
+            var spawnAtOrigin = document.getElementById('spawnAtOriginToggle').checked;
+            var cnmatLocation = document.getElementById('specificLocationToggleCNMAT');
+            var campanileLocation = document.getElementById('specificLocationToggleCampanile');
+
+            if (cnmatLocation.checked) {
+                var latitude = parseFloat(cnmatLocation.dataset.latitude);
+                var longitude = parseFloat(cnmatLocation.dataset.longitude);
+                spawnPoint = {latitude: latitude, longitude: longitude};
+            } else if (campanileLocation.checked) {
+                var latitude = parseFloat(campanileLocation.dataset.latitude);
+                var longitude = parseFloat(campanileLocation.dataset.longitude);
+                spawnPoint = {latitude: latitude, longitude: longitude};
+            } else if (spawnAtOrigin) {
+                spawnPoint = {latitude: 0 + generateNoise(), longitude: 0 + generateNoise()};
+            } else {
+                spawnPoint = null;
+            }
+
+            firstUpdateProcessed = false;
+            document.getElementById('splashScreen').style.display = 'none';
+            var audioContext = AFRAME.scenes[0].audioListener.context;
+            if (audioContext.state === 'suspended') {
+                audioContext.resume().then(() => {
+                    console.log('AudioContext resumed!');
+                }).catch(err => {
+                    console.error('Error resuming AudioContext:', err);
+                });
+            }
+
+            initializeGeolocation();
           });
   
           document.addEventListener('keydown', function(event) {
