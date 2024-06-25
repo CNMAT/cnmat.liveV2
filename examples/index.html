@@ -1,40 +1,74 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.5.0/socket.io.slim.js"></script>
     <script src="/easyrtc/easyrtc.js"></script>
     <script src="https://unpkg.com/networked-aframe@^0.12.0/dist/networked-aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-extras/dist/aframe-extras.min.js"></script>
     <style>
-        #splashScreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.9);
+        body {
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
-            z-index: 10000;
+            text-align: center;
+            min-height: 100vh; /* Full height of the viewport */
+            margin: 0; /* Remove default margin */
         }
-        #splashScreen button {
-            margin-top: 20px;
-        }
-        #spawnAtOriginToggle {
-            margin-top: 20px;
-        }
+        #splashScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 10000;
+    text-align: center; /* Ensures text elements are centered if not otherwise specified */
+}
+
+#splashScreen label {
+    display: flex;
+    flex-direction: row; /* Layout the checkbox and paragraph in a row */
+    align-items: center;
+    justify-content: center; /* Center the label content horizontally in the splashScreen */
+    width: 100%; /* Ensures the label takes full width to utilize justify-content properly */
+}
+
+#splashScreen label p {
+    margin-left: 10px; /* Space between checkbox and paragraph */
+    width: 50%; /* Adjust width if necessary */
+    text-align: left; /* Text inside the paragraph aligned left */
+}
     </style>
 </head>
 <body>
     <div id="splashScreen">
         <h1>CNMAT.live</h1>
-        <p>Select this box to allow CNMAT.live to use your information from cellular, Wi-Fi, Global Positioning System (GPS), networks, and Bluetooth to determine your current location</p>
+        <p>Click the button below to start audio and allow positional data to enter the world.</p>
         <button id="startButton">Start</button>
+        <br>
+        <br>
         <label>
-          <input type="checkbox" id="spawnAtOriginToggle">
-          Spawn at physical location
+          <input type="radio" name="locationOption" id="spawnAtOriginToggle">
+          <p>Join world at your current physical location.</p>
+        </label>
+        <label>
+          <input type="radio" name="locationOption" id="specificLocationToggleCNMAT" data-latitude="37.876636" data-longitude="-122.264534">
+          <p>Join world at CNMAT</p>
+        </label>
+        <label>
+          <input type="radio" name="locationOption" id="specificLocationToggleCampanile" data-latitude="37.872061" data-longitude="-122.257838">
+          <p>Join world at Campanile</p>
+        </label>
+        <label>
+          <input type="radio" name="locationOption" id="specificLocationToggleCampanile" data-latitude="0" data-longitude="0">
+          <p>Join world at Start</p>
         </label>
     </div>
 
@@ -166,7 +200,28 @@
     }
   });
 </script>
+
+<script>
+  AFRAME.registerComponent('modify-materials', {
+    init: function () {
+      // Wait for model to load.
+      this.el.addEventListener('model-loaded', () => {
+        // Grab the mesh / scene.
+        const obj = this.el.getObject3D('mesh');
+        // Go over the submeshes and modify materials we want.
+        obj.traverse(node => {
+          if (node.name.indexOf('ship') !== -1) {
+            node.material.color.set('red');
+          }
+        });
+      });
+    }
+  });
+</script>
     <a-scene networked-scene="app: myApp; room: room1; debug: true;">
+
+    <a-asset-item id="shineyModel" src="shiney.glb"></a-asset-item>
+    <a-asset-item id="campanile-obj" src="campanile.obj"></a-asset-item>
 
     <a-assets timeout="10000">
         <audio id="snap" src="sound/snap.mp3" preload="auto"></audio>
@@ -225,12 +280,18 @@
         </template>
       </a-assets>
       
-      <a-entity id="player" networked="template:#avatar-template;attachTemplateToLocal:false;" sound="src: #snap; autoplay: false" camera position="0 1.3 0" wasd-controls look-controls></a-entity>
+      <a-light type="ambient" color="#e0e0e0" material="transparent: true; opacity: 0.5;"></a-light>
+      <a-light type="directional" color="#fff" intensity="0.6" position="-3 3 5"></a-light>
+      <a-entity id="player" networked="template:#avatar-template;attachTemplateToLocal:false;" sound="src: #snap; autoplay: false" camera position="0 1.3 0" camera wasd-controls look-controls universal-controls></a-entity>
       <a-plane position="0 -1 -10" rotation="-90 0 0" width="300" height="300" color="#f1f1f1" ></a-plane>
+      <a-plane position="26758 -1 -63959" rotation="-90 0 0" width="300" height="300" color="#f1f1f1" ></a-plane>
+      <a-plane position="26161 -1 -63445" rotation="-90 0 0" width="300" height="300" color="#f1f1f1" ></a-plane>
       <a-box position="0 2 -12" width="2" height="2" color="#ff0000" ></a-plane>
       <a-box position="0 3 32" width="2" height="1" depth="2" color="#0000ff" ></a-plane>
       <a-box position="42 2 32" width="3" height="1" depth="2" color="#00ffff" ></a-plane>
-     
+      <a-entity gltf-model="#shineyModel" position="-50 0 -100" scale="10 10 10" rotation="0 90 0" modify-materials></a-entity>
+      <a-obj-model src="#campanile-obj" position="26061 -10 -63535" rotation="0 0 0" scale="1 1 1"></a-obj-model>
+      
       <a-entity id="soundEntity" position="1 1 -4" sound="autoplay: false" box1position></a-entity>
 
 
@@ -263,6 +324,7 @@
           }
   
           function updateAvatarPosition(position) {
+            console.log(position);
               var latitude = position.coords.latitude;
               var longitude = position.coords.longitude;
   
@@ -280,6 +342,7 @@
               var avatar = document.getElementById('player');
               avatar.setAttribute('position', `${longitudeOffset} 0 ${latitudeOffset}`);
               console.log('Updated position:', longitudeOffset, latitudeOffset);
+
           }
   
           function showError(error) {
@@ -287,21 +350,36 @@
           }
   
           startButton.addEventListener('click', () => {
-              var spawnAtOrigin = document.getElementById('spawnAtOriginToggle').checked;
-              spawnPoint = spawnAtOrigin ? {latitude: 0 + generateNoise(), longitude: 0 + generateNoise()} : null;
-              firstUpdateProcessed = false;
-  
-              document.getElementById('splashScreen').style.display = 'none';
-              var audioContext = AFRAME.scenes[0].audioListener.context;
-              if (audioContext.state === 'suspended') {
-                  audioContext.resume().then(() => {
-                      console.log('AudioContext resumed!');
-                  }).catch(err => {
-                      console.error('Error resuming AudioContext:', err);
-                  });
-              }
-  
-              initializeGeolocation();
+            var spawnAtOrigin = document.getElementById('spawnAtOriginToggle').checked;
+            var cnmatLocation = document.getElementById('specificLocationToggleCNMAT');
+            var campanileLocation = document.getElementById('specificLocationToggleCampanile');
+
+            if (cnmatLocation.checked) {
+                var latitude = parseFloat(cnmatLocation.dataset.latitude);
+                var longitude = parseFloat(cnmatLocation.dataset.longitude);
+                spawnPoint = {latitude: latitude, longitude: longitude};
+            } else if (campanileLocation.checked) {
+                var latitude = parseFloat(campanileLocation.dataset.latitude);
+                var longitude = parseFloat(campanileLocation.dataset.longitude);
+                spawnPoint = {latitude: latitude, longitude: longitude};
+            } else if (spawnAtOrigin) {
+                spawnPoint = {latitude: 0 + generateNoise(), longitude: 0 + generateNoise()};
+            } else {
+                spawnPoint = null;
+            }
+
+            firstUpdateProcessed = false;
+            document.getElementById('splashScreen').style.display = 'none';
+            var audioContext = AFRAME.scenes[0].audioListener.context;
+            if (audioContext.state === 'suspended') {
+                audioContext.resume().then(() => {
+                    console.log('AudioContext resumed!');
+                }).catch(err => {
+                    console.error('Error resuming AudioContext:', err);
+                });
+            }
+
+            initializeGeolocation();
           });
   
           document.addEventListener('keydown', function(event) {
@@ -314,9 +392,8 @@
               }
           });
       });
+      ///////////// CNMAT Location -10712328.176228292 4204317.812115532  -- 37.876690,-122.264417
+      ///////////// -10712322.981879065 4204321.712892281
   </script>
   </body>
 </html>
-
-///////////// CNMAT Location -10712328.176228292 4204317.812115532  -- 37.876690,-122.264417
-///////////// -10712322.981879065 4204321.712892281
